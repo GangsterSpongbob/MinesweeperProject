@@ -7,8 +7,8 @@ A take on the classic game Minesweeper. The idea of the game is to uncover all t
 
 1. Minefield is pre-generated and there is never a 100% guarantee that the first opened tile is not a mine. Furthermore, that means that not all fields are solvable.
 2. The remaining mines counter only counts marks on tiles that the player has placed. It does not in any way reflect on the actual number of mines on the field.
-3. The minimum number of tiles is 9 (3x3 grid) and since the maximum number of mines is 3 x n (where n is the size of the field), which means that can be a 9-tile field in which every tile contains a mine (which is in fact easily solvable).
+3. The minimum number of tiles is 9 (3x3 grid) and since the maximum number of mines is 3 x n (where n is the size of the field), there can be a 9-tile field in which every tile contains a mine.
 
-The game is made c++ and its GUI consists of built-in just console output operations.
+The game is made using the c++ language and its GUI consists only of built-in console output operations.
 
 ##### Author - Angel Ivanov
