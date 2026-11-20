@@ -13,7 +13,7 @@
 *
 */
 
-#include "FuncsHeader.h"
+#include "funcs_header.h"
 #include <iostream>
 using std::cout;
 using std::cin;
@@ -21,8 +21,7 @@ using std::cin;
 int arrSize{}, mines{};
 int** playingField{}, ** maskedField{};
 
-int main()
-{
+int main() {
 	char* input{ new char[maxArrayLength] {} };
 
 	getTableSize(input);
@@ -32,8 +31,7 @@ int main()
 	maskTable();
 	char* message{ new char[maxArrayLength] {} };
 
-	do
-	{
+	do {
 		cout << "\033[H\033[J";
 		printTable();
 
@@ -44,15 +42,12 @@ int main()
 		int xCoord{}, yCoord{};
 		getWord(cmd);
 
-		if (Compare(cmd,"quit"))
-		{
+		if (Compare(cmd,"quit")) {
 			delArr(playingField, arrSize);
 			delArr(maskedField, arrSize);
 			cout << "Quitter!" << '\n';
 			exit(0);
-		}
-		else if (!(Compare(cmd, "open") || Compare(cmd, "mark") || Compare(cmd,"unmark")))
-		{
+		} else if (!(Compare(cmd, "open") || Compare(cmd, "mark") || Compare(cmd,"unmark"))) {
 			setMessage(message, "Invalid action");
 			continue;
 		}
@@ -61,19 +56,15 @@ int main()
 		getWord(xInp);
 		getWord(yInp);
 
-		if (checkInteger(xInp) && checkInteger(yInp))
-		{
+		if (checkInteger(xInp) && checkInteger(yInp)) {
 			xCoord = strToInt(xInp);
 			yCoord = strToInt(yInp);
-		}
-		else
-		{
+		} else {
 			setMessage(message, "Invalid coordinates!");
 			continue;
 		}
 
-		if (xCoord > arrSize || yCoord > arrSize || xCoord < 1 || yCoord < 1)
-		{
+		if (xCoord > arrSize || yCoord > arrSize || xCoord < 1 || yCoord < 1) {
 			setMessage(message, "Invalid coordinates!");
 			continue;
 		}
@@ -81,23 +72,13 @@ int main()
 		xCoord--;
 		yCoord--;
 
-		if (Compare(cmd, "open"))
-		{
+		if (Compare(cmd, "open")) {
 			setMessage(message, openFunc(xCoord, yCoord));
-		}
-
-		else if (Compare(cmd, "mark"))
-		{
+		} else if (Compare(cmd, "mark")) {
 			setMessage(message, markFunc(xCoord, yCoord));
-		}
-
-		else if (Compare(cmd, "unmark"))
-		{
+		} else if (Compare(cmd, "unmark")) {
 			setMessage(message, unmarkFunc(xCoord, yCoord));
-		}
-
-		else
-		{
+		} else {
 			setMessage(message, "Invalid action!");
 		}
 
@@ -113,8 +94,7 @@ int main()
 	cout << "\033[H\033[J";
 	printTable();
 
-	if (gameOver())
-	{
+	if (gameOver()) {
 		cout << "\nGame Over!\n";
 		cout << '\n' <<
 			"\033[32m" <<
@@ -141,8 +121,7 @@ int main()
 			"         OO!                   ON!" << "\033[0m\n";
 	}
 
-	if (gameWon())
-	{
+	if (gameWon()) {
 		cout << "\nCongratulations! You beat the game!\n";
 		cout << '\n' <<
 			"\033[33m" <<
