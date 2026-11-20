@@ -5,45 +5,45 @@
 using std::srand;
 using std::rand;
 
-extern int arrSize, mines;
-extern int** playingField, ** maskedField;
+extern int arr_size, mines;
+extern int** playing_field, ** masked_field;
 
-void delArr(int**& delA, const int& dArrSize) {
-	for (int i = 0; i < dArrSize; i++) {
-		delete[] delA[i];
-		delA[i] = nullptr;
+void free_array(int**& arr, const int& arr_len) {
+	for (int i = 0; i < arr_len; i++) {
+		delete[] arr[i];
+		arr[i] = nullptr;
 	}
 
-	delete[] delA;
-	delA = nullptr;
+	delete[] arr;
+	arr = nullptr;
 }
 
-void openTile(const int& xCoord, const int& yCoord) {
-	if (xCoord < 0 || yCoord < 0 || xCoord > arrSize - 1 || yCoord > arrSize - 1)
+void open_tile(const int& x_coord, const int& y_coord) {
+	if (x_coord < 0 || y_coord < 0 || x_coord > arr_size - 1 || y_coord > arr_size - 1)
 		return;
 
-	if (maskedField[xCoord][yCoord] == 10) {
-		maskedField[xCoord][yCoord] = playingField[xCoord][yCoord];
+	if (masked_field[x_coord][y_coord] == 10) {
+		masked_field[x_coord][y_coord] = playing_field[x_coord][y_coord];
 	} else {
 		return;
 	}
 
-	if (maskedField[xCoord][yCoord] == 0) {
-		openTile(xCoord - 1, yCoord - 1);
-		openTile(xCoord - 1, yCoord);
-		openTile(xCoord - 1, yCoord + 1);
-		openTile(xCoord, yCoord - 1);
-		openTile(xCoord, yCoord + 1);
-		openTile(xCoord + 1, yCoord - 1);
-		openTile(xCoord + 1, yCoord);
-		openTile(xCoord + 1, yCoord + 1);
+	if (masked_field[x_coord][y_coord] == 0) {
+		open_tile(x_coord - 1, y_coord - 1);
+		open_tile(x_coord - 1, y_coord);
+		open_tile(x_coord - 1, y_coord + 1);
+		open_tile(x_coord, y_coord - 1);
+		open_tile(x_coord, y_coord + 1);
+		open_tile(x_coord + 1, y_coord - 1);
+		open_tile(x_coord + 1, y_coord);
+		open_tile(x_coord + 1, y_coord + 1);
 	}
 }
 
-bool gameOver() {
-	for (int i = 0; i < arrSize; i++) {
-		for (int j = 0; j < arrSize; j++) {
-			if (maskedField[i][j] == 9)
+bool game_over() {
+	for (int i = 0; i < arr_size; i++) {
+		for (int j = 0; j < arr_size; j++) {
+			if (masked_field[i][j] == 9)
 				return 1;
 		}
 	}
@@ -51,16 +51,16 @@ bool gameOver() {
 	return 0;
 }
 
-bool gameWon() {
-	for (int i = 0; i < arrSize; i++) {
-		for (int j = 0; j < arrSize; j++) {
-			if (maskedField[i][j] == 10)
+bool game_won() {
+	for (int i = 0; i < arr_size; i++) {
+		for (int j = 0; j < arr_size; j++) {
+			if (masked_field[i][j] == 10)
 				return 0;
 
-			if (playingField[i][j] != 9 && maskedField[i][j] == 11)
+			if (playing_field[i][j] != 9 && masked_field[i][j] == 11)
 				return 0;
 
-			if (playingField[i][j] == 9 && maskedField[i][j] != 11)
+			if (playing_field[i][j] == 9 && masked_field[i][j] != 11)
 				return 0;
 		}
 	}
@@ -68,96 +68,96 @@ bool gameWon() {
 	return 1;
 }
 
-void maskTable() {
-	maskedField = new int* [arrSize] {};
+void mask_table() {
+	masked_field = new int* [arr_size] {};
 
-	for (int i = 0; i < arrSize; i++)
-		maskedField[i] = new int[arrSize] {};
+	for (int i = 0; i < arr_size; i++)
+		masked_field[i] = new int[arr_size] {};
 
-	for (int i = 0; i < arrSize; i++) {
-		for (int j = 0; j < arrSize; j++) {
-			maskedField[i][j] = 10;
+	for (int i = 0; i < arr_size; i++) {
+		for (int j = 0; j < arr_size; j++) {
+			masked_field[i][j] = 10;
 		}
 	}
 }
 
-void populateTable(int mineCount) {
+void populate_table(int mine_count) {
 	srand(signed(time(NULL)));
 
-	if (arrSize < 3 || arrSize > 9)
+	if (arr_size < 3 || arr_size > 9)
 		return;
 
-	playingField = new int* [arrSize] {};
-	for (int i = 0; i < arrSize; i++)
-		playingField[i] = new int[arrSize] {};
+	playing_field = new int* [arr_size] {};
+	for (int i = 0; i < arr_size; i++)
+		playing_field[i] = new int[arr_size] {};
 
-	int extendedRowCol{ arrSize + 2 }; // size for bufferTable
-	int** bufferTable = new int* [extendedRowCol] {}; // tableArr with one empty row/column to each side
-	for (int i = 0; i < extendedRowCol; i++)
-		bufferTable[i] = new int[extendedRowCol] {};
+	int extended_row_col{ arr_size + 2 }; // size for buffer_table
+	int** buffer_table = new int* [extended_row_col] {}; // tableArr with one empty row/column to each side
+	for (int i = 0; i < extended_row_col; i++)
+		buffer_table[i] = new int[extended_row_col] {};
 
 	// Populate with mines
 
-	while (mineCount) {
-		int rowNum{ rand() % arrSize };
-		int colNum{ rand() % arrSize };
+	while (mine_count) {
+		int row_num{ rand() % arr_size };
+		int col_num{ rand() % arr_size };
 
-		if (playingField[rowNum][colNum] == 9)
+		if (playing_field[row_num][col_num] == 9)
 			continue;
 
-		playingField[rowNum][colNum] = 9;
-		mineCount--;
+		playing_field[row_num][col_num] = 9;
+		mine_count--;
 	}
 
-	// Copy to bufferTable
+	// Copy to buffer_table
 
-	for (int i = 0; i < arrSize; i++) {
-		for (int j = 0; j < arrSize; j++)
-			bufferTable[i + 1][j + 1] = playingField[i][j];
+	for (int i = 0; i < arr_size; i++) {
+		for (int j = 0; j < arr_size; j++)
+			buffer_table[i + 1][j + 1] = playing_field[i][j];
 	}
 
 	// Now populate with counters
 
-	for (int i = 0; i < arrSize; i++) {
-		for (int j = 0; j < arrSize; j++) {
-			if (playingField[i][j] != 9) {
-				int k{ i + 1 }, l{ j + 1 }; // k and l corrsepond to i and j in bufferTable
-				playingField[i][j] += bufferTable[k - 1][l - 1] == 9;
-				playingField[i][j] += bufferTable[k - 1][l] == 9;
-				playingField[i][j] += bufferTable[k - 1][l + 1] == 9;
-				playingField[i][j] += bufferTable[k][l - 1] == 9;
-				playingField[i][j] += bufferTable[k][l + 1] == 9;
-				playingField[i][j] += bufferTable[k + 1][l - 1] == 9;
-				playingField[i][j] += bufferTable[k + 1][l] == 9;
-				playingField[i][j] += bufferTable[k + 1][l + 1] == 9;
+	for (int i = 0; i < arr_size; i++) {
+		for (int j = 0; j < arr_size; j++) {
+			if (playing_field[i][j] != 9) {
+				int k{ i + 1 }, l{ j + 1 }; // k and l corrsepond to i and j in buffer_table
+				playing_field[i][j] += buffer_table[k - 1][l - 1] == 9;
+				playing_field[i][j] += buffer_table[k - 1][l] == 9;
+				playing_field[i][j] += buffer_table[k - 1][l + 1] == 9;
+				playing_field[i][j] += buffer_table[k][l - 1] == 9;
+				playing_field[i][j] += buffer_table[k][l + 1] == 9;
+				playing_field[i][j] += buffer_table[k + 1][l - 1] == 9;
+				playing_field[i][j] += buffer_table[k + 1][l] == 9;
+				playing_field[i][j] += buffer_table[k + 1][l + 1] == 9;
 			}
 		}
 	}
 
-	delArr(bufferTable, extendedRowCol);
+	free_array(buffer_table, extended_row_col);
 }
 
-char* openFunc(const int& xCoord, const int& yCoord) {
-	if (maskedField[xCoord][yCoord] == 11) {
+char* open_func(const int& x_coord, const int& y_coord) {
+	if (masked_field[x_coord][y_coord] == 11) {
 		char* output = new char[18] { "Square is marked!" };
 		return output;
-	} else if (maskedField[xCoord][yCoord] != 10) {
+	} else if (masked_field[x_coord][y_coord] != 10) {
 		char* output = new char[24] { "Square is already open!" };
 		return output;
 	} else {
-		openTile(xCoord, yCoord);
+		open_tile(x_coord, y_coord);
 		char* output = new char[1] { "" };
 		return output;
 	}
 }
 
-char* markFunc(const int& xCoord, const int& yCoord) {
-	if (maskedField[xCoord][yCoord] == 10) {
-		maskedField[xCoord][yCoord] = 11;
+char* mark_func(const int& x_coord, const int& y_coord) {
+	if (masked_field[x_coord][y_coord] == 10) {
+		masked_field[x_coord][y_coord] = 11;
 		mines--;
 		char* output = new char[1] { "" };
 		return output;
-	} else if (maskedField[xCoord][yCoord] == 11) {
+	} else if (masked_field[x_coord][y_coord] == 11) {
 		char* output = new char[26] { "Square is already marked!" };
 		return output;
 	} else {
@@ -166,15 +166,15 @@ char* markFunc(const int& xCoord, const int& yCoord) {
 	}
 }
 
-char* unmarkFunc(const int& xCoord, const int& yCoord) {
-	if (maskedField[xCoord][yCoord] == 10) {
+char* unmark_func(const int& x_coord, const int& y_coord) {
+	if (masked_field[x_coord][y_coord] == 10) {
 		char* output = new char[22] { "Square is not marked!" };
 		return output;
-	} else if (maskedField[xCoord][yCoord] != 11) {
+	} else if (masked_field[x_coord][y_coord] != 11) {
 		char* output = new char[24] { "Square is already open!" };
 		return output;
 	} else {
-		maskedField[xCoord][yCoord] = 10;
+		masked_field[x_coord][y_coord] = 10;
 		mines++;
 		char* output = new char[1] { "" };
 		return output;

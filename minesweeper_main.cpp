@@ -18,123 +18,90 @@
 using std::cout;
 using std::cin;
 
-int arrSize{}, mines{};
-int** playingField{}, ** maskedField{};
+int arr_size{}, mines{};
+int** playing_field{}, ** masked_field{};
 
 int main() {
-	char* input{ new char[maxArrayLength] {} };
+	char* input{ new char[max_array_length] {} };
 
-	getTableSize(input);
-	getMineCount(input);
+	get_table_size(input);
+	get_mine_count(input);
 
-	populateTable(mines);
-	maskTable();
-	char* message{ new char[maxArrayLength] {} };
+	populate_table(mines);
+	mask_table();
+	char* message{ new char[max_array_length] {} };
 
 	do {
 		cout << "\033[H\033[J";
-		printTable();
+		print_table();
 
 		cout << message << '\n';
 		cout << "(open <Row> <Column>) (mark <Row> <Column>) (unmark <Row> <Column>) (quit) \nEnter action: ";
 
-		char* cmd{ new char[maxArrayLength] {} };
-		int xCoord{}, yCoord{};
-		getWord(cmd);
+		char* cmd{ new char[max_array_length] {} };
+		int x_coord{}, y_coord{};
+		get_word(cmd);
 
-		if (Compare(cmd,"quit")) {
-			delArr(playingField, arrSize);
-			delArr(maskedField, arrSize);
+		if (compare(cmd, "quit")) {
+			free_array(playing_field, arr_size);
+			free_array(masked_field, arr_size);
 			cout << "Quitter!" << '\n';
 			exit(0);
-		} else if (!(Compare(cmd, "open") || Compare(cmd, "mark") || Compare(cmd,"unmark"))) {
-			setMessage(message, "Invalid action");
+		} else if (!(compare(cmd, "open") || compare(cmd, "mark") || compare(cmd, "unmark"))) {
+			set_message(message, "Invalid action");
 			continue;
 		}
 
-		char* xInp{ new char[maxArrayLength] {} }, * yInp{ new char[maxArrayLength] {} };
-		getWord(xInp);
-		getWord(yInp);
+		char* x_input{ new char[max_array_length] {} }, * y_input{ new char[max_array_length] {} };
+		get_word(x_input);
+		get_word(y_input);
 
-		if (checkInteger(xInp) && checkInteger(yInp)) {
-			xCoord = strToInt(xInp);
-			yCoord = strToInt(yInp);
+		if (check_int(x_input) && check_int(y_input)) {
+			x_coord = str_to_int(x_input);
+			y_coord = str_to_int(y_input);
 		} else {
-			setMessage(message, "Invalid coordinates!");
+			set_message(message, "Invalid coordinates!");
 			continue;
 		}
 
-		if (xCoord > arrSize || yCoord > arrSize || xCoord < 1 || yCoord < 1) {
-			setMessage(message, "Invalid coordinates!");
+		if (x_coord > arr_size || y_coord > arr_size || x_coord < 1 || y_coord < 1) {
+			set_message(message, "Invalid coordinates!");
 			continue;
 		}
 
-		xCoord--;
-		yCoord--;
+		x_coord--;
+		y_coord--;
 
-		if (Compare(cmd, "open")) {
-			setMessage(message, openFunc(xCoord, yCoord));
-		} else if (Compare(cmd, "mark")) {
-			setMessage(message, markFunc(xCoord, yCoord));
-		} else if (Compare(cmd, "unmark")) {
-			setMessage(message, unmarkFunc(xCoord, yCoord));
+		if (compare(cmd, "open")) {
+			set_message(message, open_func(x_coord, y_coord));
+		} else if (compare(cmd, "mark")) {
+			set_message(message, mark_func(x_coord, y_coord));
+		} else if (compare(cmd, "unmark")) {
+			set_message(message, unmark_func(x_coord, y_coord));
 		} else {
-			setMessage(message, "Invalid action!");
+			set_message(message, "Invalid action!");
 		}
 
-		delete[] xInp;
-		delete[] yInp;
+		delete[] x_input;
+		delete[] y_input;
 		delete[] cmd;
-		xInp = nullptr;
-		yInp = nullptr;
+		x_input = nullptr;
+		y_input = nullptr;
 		cmd = nullptr;
 
-	} while (!gameOver() && !gameWon());
+	} while (!game_over() && !game_won());
 
 	cout << "\033[H\033[J";
-	printTable();
+	print_table();
 
-	if (gameOver()) {
+	if (game_over()) {
 		cout << "\nGame Over!\n";
-		cout << '\n' <<
-			"\033[32m" <<
-			"      NO!                          MNO!\n" <<
-			"     MNO!!                        MNNOO!\n" <<
-			"   MMNO!                           MNNOO!!\n" <<
-			" MNOONNOO!   MMMMMMMMMMPPPOII!   MNNO!!!!\n" <<
-			" !O! NNO! MMMMMMMMMMMMMPPPOOOII!! NO!\n" <<
-			"       ! MMMMMMMMMMMMMPPPPOOOOIII! !\n" <<
-			"        MMMMMMMMMMMMPPPPPOOOOOOII!!\n" <<
-			"        MMMMMOOOOOOPPPPPPPPOOOOMII!\n" <<
-			"        MMMMM..    OPPMMP    .,OMI!\n" <<
-			"        MMMM::   o.,OPMP,.o   ::I!!\n" <<
-			"          NNM:::.,,OOPM!P,.::::!!\n" <<
-			"         MMNNNNNOOOOPMO!!IIPPO!!O!\n" <<
-			"         MMMMMNNNNOO:!!:!!IPPPPOO!\n" <<
-			"          MMMMMNNOOMMNNIIIPPPOO!!\n" <<
-			"             MMMONNMMNNNIIIOO!\n" <<
-			"           MN MOMMMNNNIIIIIO! OO\n" <<
-			"          MNO! IiiiiiiiiiiiI OOOO\n" <<
-			"     NNN.MNO!   O!!!!!!!!!O   OONO NO!\n" <<
-			"    MNNNNNO!    OOOOOOOOOOO    MMNNON!\n" <<
-			"      MNNNNO!    PPPPPPPPP    MMNON!\n" <<
-			"         OO!                   ON!" << "\033[0m\n";
+		cout << '\n' << GAME_OVER_ASCII;
 	}
 
-	if (gameWon()) {
+	if (game_won()) {
 		cout << "\nCongratulations! You beat the game!\n";
-		cout << '\n' <<
-			"\033[33m" <<
-			"             ___________\n" <<
-			"            \'._==_==_=_.\'\n" <<
-			"            .-\\:      /-.\n" <<
-			"           | (|:.     |) |\n" <<
-			"            \'-|:.     |-\'\n" <<
-			"              \\::.    /\n" <<
-			"               \'::. .\'\n" <<
-			"                 ) (\n" <<
-			"               _.\' \'._\n" <<
-			"              `\"\"\"\"\"\"\"`" << "\033[0m\n";
+		cout << '\n' << GAME_WON_ASCII;
 	}
 
 	delete[] input;
@@ -142,6 +109,6 @@ int main() {
 	input = nullptr;
 	message = nullptr;
 
-	delArr(maskedField, arrSize);
-	delArr(playingField, arrSize);
+	free_array(masked_field, arr_size);
+	free_array(playing_field, arr_size);
 }

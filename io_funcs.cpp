@@ -4,18 +4,18 @@
 using std::cout;
 using std::cin;
 
-extern int arrSize, mines;
-extern int** playingField, ** maskedField;
+extern int arr_size, mines;
+extern int** playing_field, ** masked_field;
 
-void printTable() {
+void print_table() {
 	cout << "Remaining mines: " << mines << '\n';
 
 	cout << '+';
-	for (int i = 0; i < arrSize + 1; i++)
+	for (int i = 0; i < arr_size + 1; i++)
 		cout << "---+";
 
 	cout << '\n' << '|';
-	for (int i = 0; i < arrSize + 1; i++) {
+	for (int i = 0; i < arr_size + 1; i++) {
 		if (i == 0) {
 			cout << " \\ |";
 			continue;
@@ -24,13 +24,13 @@ void printTable() {
 	}
 
 	cout << '\n' << '+';
-	for (int i = 0; i < arrSize + 1; i++)
+	for (int i = 0; i < arr_size + 1; i++)
 		cout << "---+";
 	cout << '\n';
 
-	for (int i = 0; i < arrSize; i++) {
+	for (int i = 0; i < arr_size; i++) {
 		cout << '|' << i + 1 << "Rw|";
-		for (int j = 0; j < arrSize; j++) {
+		for (int j = 0; j < arr_size; j++) {
 			cout << ' ';
 			/*
 			 * 0 - 8 mark number of surrounding mines
@@ -39,39 +39,39 @@ void printTable() {
 			 * 11 marks marked square (marked mine)
 			 * 0 is "empty", meaning it is open, but has no neighbouring mines
 			*/
-			if (maskedField[i][j] == 9) {
+			if (masked_field[i][j] == 9) {
 				cout << "\033[31m" << 'M' << "\033[0m";
-			} else if (maskedField[i][j] == 10) {
+			} else if (masked_field[i][j] == 10) {
 				cout << "\033[100m" << ' ' << "\033[0m";
-			} else if (maskedField[i][j] == 11) {
+			} else if (masked_field[i][j] == 11) {
 				cout << "\033[31m" << '!' << "\033[0m";
-			} else if (maskedField[i][j] == 0) {
+			} else if (masked_field[i][j] == 0) {
 				cout << ' ';
 			} else {
-				switch (maskedField[i][j]) {
+				switch (masked_field[i][j]) {
 				case 1:
-					cout << "\033[94m" << maskedField[i][j] << "\033[0m";
+					cout << "\033[94m" << masked_field[i][j] << "\033[0m";
 					break;
 				case 2:
-					cout << "\033[92m" << maskedField[i][j] << "\033[0m";
+					cout << "\033[92m" << masked_field[i][j] << "\033[0m";
 					break;
 				case 3:
-					cout << "\033[91m" << maskedField[i][j] << "\033[0m";
+					cout << "\033[91m" << masked_field[i][j] << "\033[0m";
 					break;
 				case 4:
-					cout << "\033[35m" << maskedField[i][j] << "\033[0m";
+					cout << "\033[35m" << masked_field[i][j] << "\033[0m";
 					break;
 				case 5:
-					cout << "\033[33m" << maskedField[i][j] << "\033[0m";
+					cout << "\033[33m" << masked_field[i][j] << "\033[0m";
 					break;
 				case 6:
-					cout << "\033[36m" << maskedField[i][j] << "\033[0m";
+					cout << "\033[36m" << masked_field[i][j] << "\033[0m";
 					break;
 				case 7:
-					cout << "\033[32m" << maskedField[i][j] << "\033[0m";
+					cout << "\033[32m" << masked_field[i][j] << "\033[0m";
 					break;
 				case 8:
-					cout << "\033[95m" << maskedField[i][j] << "\033[0m";
+					cout << "\033[95m" << masked_field[i][j] << "\033[0m";
 					break;
 				}
 			}
@@ -79,65 +79,65 @@ void printTable() {
 		}
 
 		cout << "\n+";
-		for (int j = 0; j < arrSize + 1; j++)
+		for (int j = 0; j < arr_size + 1; j++)
 			cout << "---+";
 		cout << '\n';
 	}
 }
 
-void getLine(char* output) {
+void get_line(char* output) {
 	int index{};
 	char input{};
 
 	cin.get(input);
 	while (input != '\n') {
-		if (index < maxArrayLength)
+		if (index < max_array_length)
 			output[index] = input;
 		cin.get(input);
 		index++;
 	}
 }
 
-void getWord(char* output) {
+void get_word(char* output) {
 	int index{};
 	char input{};
 
 	cin.get(input);
 	while (input != '\n' && input != ' ') {
-		if (index < maxArrayLength)
+		if (index < max_array_length)
 			output[index] = input;
 		cin.get(input);
 		index++;
 	}
 }
 
-void getTableSize(char* input) {
+void get_table_size(char* input) {
 	do {
 		cout << "Enter number of rows and columns between 3 and 9: ";
-		clearStr(input);
-		getLine(input);
+		clear_str(input);
+		get_line(input);
 
-		if (checkInteger(input)) {
-			arrSize = strToInt(input);
+		if (check_int(input)) {
+			arr_size = str_to_int(input);
 		} else {
-			clearStr(input);
+			clear_str(input);
 			continue;
 		}
 
-	} while (arrSize < 3 || arrSize > 9);
+	} while (arr_size < 3 || arr_size > 9);
 }
 
-void getMineCount(char* input) {
+void get_mine_count(char* input) {
 	do {
-		cout << "Enter number of mines between 1 and " << (3 * arrSize) << ": ";
-		clearStr(input);
-		getLine(input);
+		cout << "Enter number of mines between 1 and " << (3 * arr_size) << ": ";
+		clear_str(input);
+		get_line(input);
 
-		if (checkInteger(input)) {
-			mines = strToInt(input);
+		if (check_int(input)) {
+			mines = str_to_int(input);
 		} else {
 			continue;
 		}
 
-	} while (mines < 1 || mines > 3 * arrSize);
+	} while (mines < 1 || mines > 3 * arr_size);
 }
