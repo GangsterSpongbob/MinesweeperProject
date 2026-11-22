@@ -5,7 +5,9 @@
 using std::cout;
 using std::cin;
 
-void get_line(char* output) {
+Line get_line() {
+	Line output;
+
 	int index{};
 	char input{};
 
@@ -16,9 +18,13 @@ void get_line(char* output) {
 		cin.get(input);
 		index++;
 	}
+
+    return output;
 }
 
-void get_word(char* output) {
+Line get_word() {
+	Line output;
+
 	int index{};
 	char input{};
 
@@ -29,67 +35,45 @@ void get_word(char* output) {
 		cin.get(input);
 		index++;
 	}
+    return output;
 }
 
 commands read_cmd() {
-	char* output{ new char[max_array_length] {} };
+	Line input = get_word();
 
-	try {
-		get_word(output);
-
-		if (compare(output, "open")) {
-			delete[] output;
-			return OPEN;
-		} else if (compare(output, "mark")) {
-			delete[] output;
-			return MARK;
-		} else if (compare(output, "unmark")) {
-			delete[] output;
-			return UNMARK;
-		} else if (compare(output, "quit")) {
-			delete[] output;
-			return QUIT;
-		} else {
-			delete[] output;
-			return NONE;
-		}
-	} catch (...) {
-		delete[] output;
-		throw std::invalid_argument("Invalid command input");
+	if (input == "open") {
+		return OPEN;
+	} else if (input == "mark") {
+		return MARK;
+	} else if (input == "unmark") {
+		return UNMARK;
+	} else if (input == "quit") {
+		return QUIT;
+	} else {
+		return NONE;
 	}
-
 }
 
 int read_int() {
-	char* output{ new char[max_array_length] {} };
+	Line input = get_word();
 
-	try {
-		get_word(output);
+	if (!input.check_int())
+		throw std::invalid_argument("Invalid integer input");
 
-		if (!check_int(output))
-			throw std::invalid_argument("Invalid integer input");
-
-		int result = str_to_int(output);
-		delete[] output;
-		return result;
-	} catch (...) {
-		delete[] output;
-		throw;
-	}
+	int result = input.to_int();
+	return result;
 }
 
-int get_table_size(char* input) {
+int get_table_size() {
 	int size{};
 
 	do {
 		cout << "Enter number of rows and columns between 3 and 9: ";
-		clear_str(input);
-		get_line(input);
+		Line input = get_line();
 
-		if (check_int(input)) {
-			size = str_to_int(input);
+		if (input.check_int()) {
+			size = input.to_int();
 		} else {
-			clear_str(input);
 			continue;
 		}
 
@@ -97,16 +81,15 @@ int get_table_size(char* input) {
 	return size;
 }
 
-int get_mine_count(char* input, const int& arr_size) {
+int get_mine_count(const int& arr_size) {
 	int mines{};
 
 	do {
 		cout << "Enter number of mines between 1 and " << (3 * arr_size) << ": ";
-		clear_str(input);
-		get_line(input);
+		Line input = get_line();
 
-		if (check_int(input)) {
-			mines = str_to_int(input);
+		if (input.check_int()) {
+			mines = input.to_int();
 		} else {
 			continue;
 		}

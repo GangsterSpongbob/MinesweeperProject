@@ -1,39 +1,60 @@
 #include "funcs_header.h"
 #include <iostream> //
 
-// fills string with \0 characters
-void clear_str(char* clr) {
-	for (int i = 0; i < max_array_length; i++)
-		clr[i] = '\0';
-}
-
-void set_message(char* msg, const char inp[]) {
-	clear_str(msg);
+Line& Line::assign(const char* str) {
 	int index{};
-	while (inp[index] != '\0') {
-		msg[index] = inp[index];
+	while (str[index] != '\0' && index < max_array_length) {
+		line[index] = str[index];
 		index++;
 	}
+
+	return *this;
 }
 
-bool compare(const char* to_compare, const char* comp) {
+Line::Line(const char* str) {
+	this->assign(str);
+}
+
+char& Line::operator[](const int& index) {
+	return line[index];
+}
+
+const char& Line::operator[](const int& index) const {
+	return line[index];
+}
+
+Line& Line::operator=(const char* str) {
+	return this->assign(str);
+}
+
+Line& Line::operator=(const Line& other) {
+	return this->assign(other.line);
+}
+
+bool Line::operator==(const char* str) {
 	int index{};
-	while (to_compare[index] != '\0' && comp[index] != '\0') {
-		if (to_compare[index] != comp[index])
-			return 0;
+	while (line[index] != '\0' && str[index] != '\0' && index < max_array_length) {
+		if (line[index] != str[index])
+			return false;
 		index++;
 	}
-	return 1;
+	return true;
 }
 
-bool check_int(const char* check) {
-	if (*check == '\0') // empty string cannot be number
+bool Line::operator==(const Line& other) {
+	return *this == other.line;
+}
+
+bool Line::check_int() {
+	char* check = this->line;
+
+	if (check[0] == '\0') // empty string cannot be number
 		return 0;
 
-	int index{ *check == '-' ? 1 : 0 };
+	int index{ check[0] == '-' ? 1 : 0 };
 
 	while (check[index] != '\0') {
-		if (!(check[index] >= '0' && check[index] <= '9'))
+		if (!(check[index] >= '0' && check[index] <= '9' && index < max_array_length))
 			return 0;
 		index++;
 	}
@@ -41,20 +62,22 @@ bool check_int(const char* check) {
 	return 1;
 }
 
-int str_to_int(const char* to_int) {
-	if (!check_int(to_int))
+int Line::to_int() {
+	char* to_int = this->line;
+
+	if (!this->check_int())
 		return 0;
 
-	int index{}, total{}, negative{ 1 };
+	int index{}, total{}, polarity{ 1 };
 	if (to_int[index] == '-') {
-		negative = -1;
+		polarity = -1;
 		index++;
 	}
 
-	while (to_int[index] != '\0') {
+	while (to_int[index] != '\0' && index < max_array_length) {
 		total = 10 * total + (to_int[index] - '0');
 		index++;
 	}
 
-	return negative * total;
+	return polarity * total;
 }
