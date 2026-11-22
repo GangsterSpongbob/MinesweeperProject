@@ -80,30 +80,55 @@ constexpr const char* color_codes[] = {
 const bool mode_coloured = true;
 const int max_array_length{ 100 }; // maximum array length is 100 elements
 
-extern int arr_size, mines;
-extern int** playing_field, ** masked_field;
+class Field final {
+public:
+    static Field& instance(const int, const int); // create instance with size and mine count
+    static Field& instance(); // get instance after it has been created
 
+    void print_table();
+
+    bool  game_over();
+    bool  game_won();
+
+    char* open_func(const int&, const int&);
+    char* mark_func(const int&, const int&);
+    char* unmark_func(const int&, const int&);
+
+    Field(const Field&)            = delete;
+    Field& operator=(const Field&) = delete;
+    Field(Field&&)                 = delete;
+    Field& operator=(Field&&)      = delete;
+
+    ~Field();
+
+private:
+    Field(const int&, const int&); // private: only instance() constructs
+
+    void open_tile(const int&, const int&);
+    
+    // static helper functions
+    static void create_playing_field(Field&, const int&, int);
+    static void create_masked_field(Field&, const int&);
+
+    // member variables
+    int arr_size;
+    int mines;
+    int** playing_field;
+    int** masked_field;
+};
+
+// str_funcs.cpp
 void clear_str(char*);
 void set_message(char*, const char[]);
 bool compare(const char*, const char*);
 bool check_int(const char*);
 int  str_to_int(const char*);
 
-void     print_table();
+// io_funcs.cpp
 void     get_line(char*);
 commands read_cmd();
 int      read_int();
-void     get_table_size(char*);
-void     get_mine_count(char*);
-
-void  free_array(int**&, const int&);
-void  open_tile(const int&, const int&);
-bool  game_over();
-bool  game_won();
-void  mask_table();
-void  populate_table(int);
-char* open_func(const int&, const int&);
-char* mark_func(const int&, const int&);
-char* unmark_func(const int&, const int&);
+int      get_table_size(char*);
+int      get_mine_count(char*, const int&);
 
 #endif // !MINES

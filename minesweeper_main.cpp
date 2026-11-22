@@ -18,22 +18,20 @@
 using std::cout;
 using std::cin;
 
-int arr_size{}, mines{};
-int** playing_field{}, ** masked_field{};
-
 int main() {
 	char* input{ new char[max_array_length] {} };
+	int arr_size{}, mines{};
 
-	get_table_size(input);
-	get_mine_count(input);
+	arr_size = get_table_size(input);
+	mines = get_mine_count(input, arr_size);
 
-	populate_table(mines);
-	mask_table();
+	Field& field = Field::instance(arr_size, mines);
+
 	char* message{ new char[max_array_length] {} };
 
 	do {
 		cout << "\033[H\033[J";
-		print_table();
+		field.print_table();
 
 		cout << message << '\n';
 		cout << "(o)pen   <Row> <Column>\n" \
@@ -51,8 +49,6 @@ int main() {
 		}
 
 		if (cmd_type == QUIT) {
-			free_array(playing_field, arr_size);
-			free_array(masked_field, arr_size);
 			cout << "Quitter!" << '\n';
 			exit(0);
 		}
@@ -78,26 +74,26 @@ int main() {
 		y_coord--;
 
 		if (cmd_type == OPEN) {
-			set_message(message, open_func(x_coord, y_coord));
+			set_message(message, field.open_func(x_coord, y_coord));
 		} else if (cmd_type == MARK) {
-			set_message(message, mark_func(x_coord, y_coord));
+			set_message(message, field.mark_func(x_coord, y_coord));
 		} else if (cmd_type == UNMARK) {
-			set_message(message, unmark_func(x_coord, y_coord));
+			set_message(message, field.unmark_func(x_coord, y_coord));
 		} else {
 			set_message(message, "Invalid action!");
 		}
 
-	} while (!game_over() && !game_won());
+	} while (!field.game_over() && !field.game_won());
 
 	cout << "\033[H\033[J";
-	print_table();
+	field.print_table();
 
-	if (game_over()) {
+	if (field.game_over()) {
 		cout << "\nGame Over!\n";
 		cout << '\n' << GAME_OVER_ASCII;
 	}
 
-	if (game_won()) {
+	if (field.game_won()) {
 		cout << "\nCongratulations! You beat the game!\n";
 		cout << '\n' << GAME_WON_ASCII;
 	}
@@ -106,7 +102,4 @@ int main() {
 	delete[] message;
 	input = nullptr;
 	message = nullptr;
-
-	free_array(masked_field, arr_size);
-	free_array(playing_field, arr_size);
 }
