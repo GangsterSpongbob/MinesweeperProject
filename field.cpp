@@ -1,8 +1,6 @@
 #include "funcs_header.h"
 
 #include <iostream>
-#include <ctime>
-#include <random>
 #include <memory>
 
 using std::cout;
@@ -25,7 +23,7 @@ Field& Field::instance() {
     return *g_field;
 }
 
-void Field::create_playing_field(Field& field, const int& arr_size, int mine_count) {
+void Field::create_playing_field(Field& field, int arr_size, int mine_count) {
 	std::srand(signed(time(NULL)));
 
 	if (arr_size < 3 || arr_size > 9)
@@ -66,7 +64,7 @@ void Field::create_playing_field(Field& field, const int& arr_size, int mine_cou
 	}
 }
 
-void Field::create_masked_field(Field& field, const int& arr_size) {
+void Field::create_masked_field(Field& field, int arr_size) {
 	int (&masked_field)[max_masked_field_size][max_masked_field_size] = field.masked_field;
 
 	for (int i = 0; i < arr_size; i++) {
@@ -76,12 +74,12 @@ void Field::create_masked_field(Field& field, const int& arr_size) {
 	}
 }
 
-Field::Field(const int& size, const int& mine_count) : arr_size{ size }, mines{ mine_count } {
+Field::Field(int size, int mine_count) : arr_size{ size }, mines{ mine_count } {
     create_playing_field(*this, arr_size, mines);
     create_masked_field(*this, arr_size);
 }
 
-void Field::open_tile(const int& x_coord, const int& y_coord) {
+void Field::open_tile(int x_coord, int y_coord) {
 	if (x_coord < 0 || y_coord < 0 || x_coord > arr_size - 1 || y_coord > arr_size - 1)
 		return;
 
@@ -191,7 +189,7 @@ bool Field::game_won() {
 	return 1;
 }
 
-Line Field::open_func(const int& x_coord, const int& y_coord) {
+Line Field::open_func(int x_coord, int y_coord) {
 	Line output;
 
 	if (masked_field[x_coord][y_coord] == 11) {
@@ -206,7 +204,7 @@ Line Field::open_func(const int& x_coord, const int& y_coord) {
     return output;
 }
 
-Line Field::mark_func(const int& x_coord, const int& y_coord) {
+Line Field::mark_func(int x_coord, int y_coord) {
 	Line output;
 
 	if (masked_field[x_coord][y_coord] == 10) {
@@ -222,7 +220,7 @@ Line Field::mark_func(const int& x_coord, const int& y_coord) {
     return output;
 }
 
-Line Field::unmark_func(const int& x_coord, const int& y_coord) {
+Line Field::unmark_func(int x_coord, int y_coord) {
 	Line output;
 
 	if (masked_field[x_coord][y_coord] == 10) {

@@ -14,9 +14,11 @@
 */
 
 #include "funcs_header.h"
+
 #include <iostream>
+
 using std::cout;
-using std::cin;
+using namespace console_io;
 
 int main() {
 	int arr_size{}, mines{};

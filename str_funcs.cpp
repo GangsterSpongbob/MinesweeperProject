@@ -1,5 +1,8 @@
 #include "funcs_header.h"
-#include <iostream> //
+
+#include <iostream>
+
+using std::cin;
 
 Line& Line::assign(const char* str) {
 	int index{};
@@ -15,11 +18,11 @@ Line::Line(const char* str) {
 	this->assign(str);
 }
 
-char& Line::operator[](const int& index) {
+char& Line::operator[](int index) {
 	return line[index];
 }
 
-const char& Line::operator[](const int& index) const {
+const char& Line::operator[](int index) const {
 	return line[index];
 }
 
@@ -31,7 +34,7 @@ Line& Line::operator=(const Line& other) {
 	return this->assign(other.line);
 }
 
-bool Line::operator==(const char* str) {
+bool Line::operator==(const char* str) const {
 	int index{};
 	while (line[index] != '\0' && str[index] != '\0' && index < max_array_length) {
 		if (line[index] != str[index])
@@ -41,8 +44,12 @@ bool Line::operator==(const char* str) {
 	return true;
 }
 
-bool Line::operator==(const Line& other) {
+bool Line::operator==(const Line& other) const {
 	return *this == other.line;
+}
+
+bool operator==(const char* a, const Line& b) {
+	return b == a;
 }
 
 bool Line::check_int() {
@@ -66,7 +73,7 @@ int Line::to_int() {
 	char* to_int = this->line;
 
 	if (!this->check_int())
-		return 0;
+		return -1;
 
 	int index{}, total{}, polarity{ 1 };
 	if (to_int[index] == '-') {
@@ -80,4 +87,37 @@ int Line::to_int() {
 	}
 
 	return polarity * total;
+}
+
+Line Line::get_line() {
+	Line output;
+
+	int index{};
+	char input{};
+
+	cin.get(input);
+	while (input != '\n') {
+		if (index < max_array_length)
+			output[index] = input;
+		cin.get(input);
+		index++;
+	}
+
+	return output;
+}
+
+Line Line::get_word() {
+	Line output;
+
+	int index{};
+	char input{};
+
+	cin.get(input);
+	while (input != '\n' && input != ' ') {
+		if (index < max_array_length)
+			output[index] = input;
+		cin.get(input);
+		index++;
+	}
+	return output;
 }

@@ -90,23 +90,28 @@ public:
 
     Line() = default;
     Line(const char* str);
-    ~Line() = default;
 
-    char& operator[](const int&);
-    const char& operator[](const int&) const;
+    char& operator[](int);
+    const char& operator[](int) const;
 
     Line& operator=(const char*);
     Line& operator=(const Line&);
 
-    bool operator==(const char*);
-    bool operator==(const Line&);
+    bool operator==(const char*) const;
+    bool operator==(const Line&) const;
 
     bool check_int();
     int to_int();
 
+    // factories
+    static Line get_word();
+    static Line get_line();
+
 private:
     Line& assign(const char*);
 };
+
+inline bool operator==(const char*, const Line&);
 
 class Field final {
 public:
@@ -118,9 +123,9 @@ public:
     bool  game_over();
     bool  game_won();
 
-    Line open_func(const int&, const int&);
-    Line mark_func(const int&, const int&);
-    Line unmark_func(const int&, const int&);
+    Line open_func(int, int);
+    Line mark_func(int, int);
+    Line unmark_func(int, int);
 
     Field(const Field&)            = delete;
     Field& operator=(const Field&) = delete;
@@ -130,13 +135,13 @@ public:
     ~Field() = default;
 
 private:
-    Field(const int&, const int&); // private: only instance() constructs
+    Field(int, int); // private: only instance() constructs
 
-    void open_tile(const int&, const int&);
+    void open_tile(int, int);
     
     // static helper functions
-    static void create_playing_field(Field&, const int&, int);
-    static void create_masked_field(Field&, const int&);
+    static void create_playing_field(Field&, int, int);
+    static void create_masked_field(Field&, int);
 
     // member variables
     int arr_size;
@@ -146,10 +151,11 @@ private:
 };
 
 // io_funcs.cpp
-void     get_line(Line&);
-commands read_cmd();
-int      read_int();
-int      get_table_size();
-int      get_mine_count(const int&);
+namespace console_io {
+    commands read_cmd();
+    int      read_int();
+    int      get_table_size();
+    int      get_mine_count(int);
+}
 
 #endif // !MINES
