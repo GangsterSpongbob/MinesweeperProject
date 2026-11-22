@@ -36,35 +36,40 @@ int main() {
 		print_table();
 
 		cout << message << '\n';
-		cout << "(open <Row> <Column>) (mark <Row> <Column>) (unmark <Row> <Column>) (quit) \nEnter action: ";
+		cout << "(o)pen   <Row> <Column>\n" \
+				"(m)ark   <Row> <Column>\n" \
+				"(u)nmark <Row> <Column>\n" \
+				"(q)uit \nEnter action: ";
 
-		char* cmd{ new char[max_array_length] {} };
-		int x_coord{}, y_coord{};
-		get_word(cmd);
+		commands cmd_type = NONE;
 
-		if (compare(cmd, "quit")) {
+		try {
+			cmd_type = read_cmd();
+		} catch (const std::invalid_argument& e) {
+			set_message(message, "Invalid input!");
+			continue;
+		}
+
+		if (cmd_type == QUIT) {
 			free_array(playing_field, arr_size);
 			free_array(masked_field, arr_size);
 			cout << "Quitter!" << '\n';
 			exit(0);
-		} else if (!(compare(cmd, "open") || compare(cmd, "mark") || compare(cmd, "unmark"))) {
-			set_message(message, "Invalid action");
-			continue;
 		}
 
-		char* x_input{ new char[max_array_length] {} }, * y_input{ new char[max_array_length] {} };
-		get_word(x_input);
-		get_word(y_input);
+		int x_coord = 0;
+		int y_coord = 0;
 
-		if (check_int(x_input) && check_int(y_input)) {
-			x_coord = str_to_int(x_input);
-			y_coord = str_to_int(y_input);
-		} else {
+		try {
+			x_coord = read_int();
+			y_coord = read_int();
+		} catch (const std::invalid_argument& e) {
 			set_message(message, "Invalid coordinates!");
 			continue;
 		}
 
-		if (x_coord > arr_size || y_coord > arr_size || x_coord < 1 || y_coord < 1) {
+		if (x_coord < 1 || x_coord > arr_size ||
+			y_coord < 1 || y_coord > arr_size) {
 			set_message(message, "Invalid coordinates!");
 			continue;
 		}
@@ -72,22 +77,15 @@ int main() {
 		x_coord--;
 		y_coord--;
 
-		if (compare(cmd, "open")) {
+		if (cmd_type == OPEN) {
 			set_message(message, open_func(x_coord, y_coord));
-		} else if (compare(cmd, "mark")) {
+		} else if (cmd_type == MARK) {
 			set_message(message, mark_func(x_coord, y_coord));
-		} else if (compare(cmd, "unmark")) {
+		} else if (cmd_type == UNMARK) {
 			set_message(message, unmark_func(x_coord, y_coord));
 		} else {
 			set_message(message, "Invalid action!");
 		}
-
-		delete[] x_input;
-		delete[] y_input;
-		delete[] cmd;
-		x_input = nullptr;
-		y_input = nullptr;
-		cmd = nullptr;
 
 	} while (!game_over() && !game_won());
 

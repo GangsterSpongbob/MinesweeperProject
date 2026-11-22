@@ -1,6 +1,12 @@
 #include "funcs_header.h"
 #include <iostream> //
 
+// fills string with \0 characters
+void clear_str(char* clr) {
+	for (int i = 0; i < max_array_length; i++)
+		clr[i] = '\0';
+}
+
 void set_message(char* msg, const char inp[]) {
 	clear_str(msg);
 	int index{};
@@ -8,12 +14,6 @@ void set_message(char* msg, const char inp[]) {
 		msg[index] = inp[index];
 		index++;
 	}
-}
-
-// fills string with \0 characters
-void clear_str(char* clr) {
-	for (int i = 0; i < max_array_length; i++)
-		clr[i] = '\0';
 }
 
 bool compare(const char* to_compare, const char* comp) {

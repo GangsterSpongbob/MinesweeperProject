@@ -1,5 +1,6 @@
 #include "funcs_header.h"
 #include <iostream>
+#include <stdexcept>
 
 using std::cout;
 using std::cin;
@@ -33,47 +34,29 @@ void print_table() {
 		for (int j = 0; j < arr_size; j++) {
 			cout << ' ';
 			/*
-			 * 0 - 8 mark number of surrounding mines
+			 * 1 - 8 mark number of surrounding mines
 			 * 9 marks a mine
 			 * 10 marks undiscovered square
 			 * 11 marks marked square (marked mine)
 			 * 0 is "empty", meaning it is open, but has no neighbouring mines
 			*/
-			if (masked_field[i][j] == 9) {
-				cout << "\033[31m" << 'M' << "\033[0m";
-			} else if (masked_field[i][j] == 10) {
-				cout << "\033[100m" << ' ' << "\033[0m";
-			} else if (masked_field[i][j] == 11) {
-				cout << "\033[31m" << '!' << "\033[0m";
-			} else if (masked_field[i][j] == 0) {
+			switch (masked_field[i][j]) {
+			case 9:
+				cout << color_codes[RED] << 'M' << color_codes[RESET];
+				break;
+			case 10:
+				cout << color_codes[GREY] << ' ' << color_codes[RESET];
+				break;
+			case 11:
+				cout << color_codes[RED] << '!' << color_codes[RESET];
+				break;
+			case 0:
 				cout << ' ';
-			} else {
-				switch (masked_field[i][j]) {
-				case 1:
-					cout << "\033[94m" << masked_field[i][j] << "\033[0m";
-					break;
-				case 2:
-					cout << "\033[92m" << masked_field[i][j] << "\033[0m";
-					break;
-				case 3:
-					cout << "\033[91m" << masked_field[i][j] << "\033[0m";
-					break;
-				case 4:
-					cout << "\033[35m" << masked_field[i][j] << "\033[0m";
-					break;
-				case 5:
-					cout << "\033[33m" << masked_field[i][j] << "\033[0m";
-					break;
-				case 6:
-					cout << "\033[36m" << masked_field[i][j] << "\033[0m";
-					break;
-				case 7:
-					cout << "\033[32m" << masked_field[i][j] << "\033[0m";
-					break;
-				case 8:
-					cout << "\033[95m" << masked_field[i][j] << "\033[0m";
-					break;
-				}
+				break;
+			default:
+				cout << color_codes[masked_field[i][j]] << masked_field[i][j]
+					<< color_codes[RESET];
+				break;
 			}
 			cout << " |";
 		}
@@ -108,6 +91,53 @@ void get_word(char* output) {
 			output[index] = input;
 		cin.get(input);
 		index++;
+	}
+}
+
+commands read_cmd() {
+	char* output{ new char[max_array_length] {} };
+
+	try {
+		get_word(output);
+
+		if (compare(output, "open")) {
+			free(output);
+			return OPEN;
+		} else if (compare(output, "mark")) {
+			free(output);
+			return MARK;
+		} else if (compare(output, "unmark")) {
+			free(output);
+			return UNMARK;
+		} else if (compare(output, "quit")) {
+			free(output);
+			return QUIT;
+		} else {
+			free(output);
+			return NONE;
+		}
+	} catch (...) {
+		free(output);
+		throw std::invalid_argument("Invalid command input");
+	}
+
+}
+
+int read_int() {
+	char* output{ new char[max_array_length] {} };
+
+	try {
+		get_word(output);
+
+		if (!check_int(output))
+			throw std::invalid_argument("Invalid integer input");
+
+		int result = str_to_int(output);
+		delete[] output;
+		return result;
+	} catch (...) {
+		delete[] output;
+		throw;
 	}
 }
 
